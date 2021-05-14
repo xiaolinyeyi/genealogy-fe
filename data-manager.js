@@ -61,16 +61,13 @@ function callback(response) {
         localStorage.setItem(cacheKey, JSON.stringify(cacheJson))
         fetchHandler(response.data)
         allPeople = response.data
-        console.log("cache expeired")
     } else {
         fetchHandler(cacheJson.response.data)
         allPeople = cacheJson.response.data
-        console.log("use cache")
     }
-    console.log(allPeople)
 }
 
-function fetchFamilyInfo(peopleID, allPeople) {
+function fetchFamilyInfo(peopleID) {
     var people = allPeople[peopleID]
     if (people == null || people.sex == false) {
         return null;
@@ -110,10 +107,27 @@ function groupByGen() {
     var map = new Map()
     for (var key in allPeople) {
         var people = allPeople[key]
+        if (people.genID == null) {
+            continue
+        }
         if (map[people.genID] == null) {
             map[people.genID] = new Array()
         }
         map[people.genID].push(people.id)
     }
     return map
+}
+
+function peopleIsFamilyOwnerWithID(peopleID) {
+    let people = allPeople[peopleID]
+    if (people.sex == false) {
+        return false
+    }
+    if (people.spouses != null && people.spouses.length > 0) {
+        return true
+    }
+    if (people.children != null && people.children.length > 0) {
+        return true
+    }
+    return false
 }

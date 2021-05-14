@@ -3,7 +3,7 @@ table, td, th {
 }
 
 td, th {
-    width: 100px;
+    width: 50px;
     height: 50px;
     text-align: center;
     font-size: large;
@@ -12,6 +12,14 @@ td, th {
 table {
     border-collapse: collapse;
     margin-top: 20px;
+}
+
+#th-sex {
+    width: 5%;
+}
+
+#th-spouses {
+    width: 15%;
 }
 
 #title {

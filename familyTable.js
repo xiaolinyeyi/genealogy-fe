@@ -3,17 +3,18 @@ function familyTableHandler(params, contentDiv) {
     if (ownerID == null) {
         ownerID = 1
     }
-    let family = fetchFamilyInfo(ownerID, allPeople)
+    let family = fetchFamilyInfo(ownerID)
     let titleDiv = document.createElement("div")
     titleDiv.id = "title"
     contentDiv.appendChild(titleDiv)
-    let genTitle = "<br>赵氏第" + family.owner.genID + "代</br>"
+    let defaultTitle = "赵氏第" + family.owner.genID + "代<br>"
+    let tableTitle = params["title"] ? params["title"] : defaultTitle 
     let lastTitle = ""
     if (family.father != null) {
-        lastTitle = "<br>上一代户主：<a href='#familyTable?id=" + family.father.id + "'>" + family.father.name + "</a></br>"
+        lastTitle = "上一代户主：<a href='#familyTable?id=" + family.father.id + "'>" + family.father.name + "</a><br>"
     }
-    let currentTitle = "<br>户主：" + family.owner.name + "</br>";
-    titleDiv.innerHTML = genTitle + lastTitle + currentTitle
+    let currentTitle = "户主：" + family.owner.name + "<br>";
+    titleDiv.innerHTML = tableTitle + lastTitle + currentTitle
     
     renderFamilyTable(family, contentDiv)
 }
@@ -30,7 +31,8 @@ var colName = {
     "politicalStatus": "政治面貌",
     "nativePlace": "籍贯",
     "habitation": "居住地",
-    "deathday": "故时"
+    "spouses": "婚姻",
+    "deathday": "故时",
 }
 
 // 列值与显示值转换
@@ -68,7 +70,7 @@ var colMapper = {
             return ""
         }
     },
-    "sex": function(family, people) { return people.sex ? "男" : "女" },
+    "sex": function(family, people) { return people.sex != false ? "男" : "女" },
     "relationship": function(family, people) {
         if (people.ext != null && people.ext.relationship != null) {
             return people.ext.relationship
@@ -83,7 +85,7 @@ var colMapper = {
             }
         } 
 
-        return people.sex ? "子" : "女"
+        return people.sex != false ? "子" : "女"
     },
     "posts": function(family, people) {
         if (people.posts != null) {
@@ -98,6 +100,36 @@ var colMapper = {
         } else {
             return ""
         }
+    },
+    "spouses": function(family, people) {
+        if (people.id == family.owner.id) {
+            return "" // 把婚姻相关放在妻子处
+        }
+        let keyName = {"time": "嫁娶时间", "place": "嫁娶地址"}
+
+        if (family.owner.spouses != null) {
+            for (let i = 0; i < family.owner.spouses.length; i++) {
+                let spouse = family.owner.spouses[i]
+                if (people.id == spouse.id) { // 妻子
+                    return (spouse.time != null ? ("嫁娶时间：" + spouse.time + "<br") : "") 
+                         + (spouse.place != null ? ("嫁娶地址：" + spouse.place + "<br>") : "")
+                }
+            }
+        }
+        if (people.spouses == null) {
+            return ""
+        }
+        let lastSpouse = people.spouses[people.spouses.length - 1] // 只展示最近的婚姻
+        let str = ""
+        if (people.sex == false && lastSpouse != null && lastSpouse.id != null) {
+            str = str + "丈夫姓名：" + allPeople[lastSpouse.id].name + "<br>"
+        }
+        for (let key in keyName) {
+            if (lastSpouse[key] != null) {
+                str = str + keyName[key] + "：" + people.spouses[people.spouses.length - 1][key] + "<br>"
+            }
+        }
+        return str
     }
 }
 
