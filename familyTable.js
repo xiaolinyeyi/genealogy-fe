@@ -27,12 +27,11 @@ var colName = {
     "relationship": "户主关系",
     "educational": "文化程度",
     "jobs": "从事职业",
-    "posts": "历任职务",
-    "politicalStatus": "政治面貌",
     "nativePlace": "籍贯",
     "habitation": "居住地",
     "spouses": "婚姻",
     "deathday": "故时",
+    "ext": "更多"
 }
 
 // 列值与显示值转换
@@ -47,6 +46,9 @@ var colMapper = {
         }
     },
     "birthday": function(family, people) {
+        if (people.ext != null && people.ext[0]["birthday"] != null) {
+            return people.ext[0]["birthday"]
+        }
         if (people.birthday == null) {
             return "不详"
         } else {
@@ -64,7 +66,7 @@ var colMapper = {
             if (year - birthYear > 100) { // 超过100，认为已经去世
                 return "不详"
             }
-        } else if (people.birthday == null) {
+        } else if (people.birthday == null && people.genID < 6) {
             return "不详"
         } else {
             return ""
@@ -72,8 +74,8 @@ var colMapper = {
     },
     "sex": function(family, people) { return people.sex != false ? "男" : "女" },
     "relationship": function(family, people) {
-        if (people.ext != null && people.ext.relationship != null) {
-            return people.ext.relationship
+        if (people.ext != null && people.ext[0].relationship != null) {
+            return people.ext[0].relationship
         }
         if (people.id == family.owner.id) {
             return "户主"
@@ -101,18 +103,25 @@ var colMapper = {
             return ""
         }
     },
+    "habitation": function(family, people) {
+        if (people.habitation != null) {
+            return people.habitation[people.habitation.length - 1]
+        } else {
+            return ""
+        }
+    },
     "spouses": function(family, people) {
         if (people.id == family.owner.id) {
             return "" // 把婚姻相关放在妻子处
         }
-        let keyName = {"time": "嫁娶时间", "place": "嫁娶地址"}
+        let keyName = {"time": "【时间】", "place": "【地址】"}
 
         if (family.owner.spouses != null) {
             for (let i = 0; i < family.owner.spouses.length; i++) {
                 let spouse = family.owner.spouses[i]
                 if (people.id == spouse.id) { // 妻子
-                    return (spouse.time != null ? ("嫁娶时间：" + spouse.time + "<br") : "") 
-                         + (spouse.place != null ? ("嫁娶地址：" + spouse.place + "<br>") : "")
+                    return (spouse.time != null ? ("【时间】" + spouse.time + "<br") : "") 
+                         + (spouse.place != null ? ("【地址】" + spouse.place + "<br>") : "")
                 }
             }
         }
@@ -122,12 +131,25 @@ var colMapper = {
         let lastSpouse = people.spouses[people.spouses.length - 1] // 只展示最近的婚姻
         let str = ""
         if (people.sex == false && lastSpouse != null && lastSpouse.id != null) {
-            str = str + "丈夫姓名：" + allPeople[lastSpouse.id].name + "<br>"
+            str = str + "【姓名】" + allPeople[lastSpouse.id].name + "<br>"
         }
         for (let key in keyName) {
             if (lastSpouse[key] != null) {
-                str = str + keyName[key] + "：" + people.spouses[people.spouses.length - 1][key] + "<br>"
+                str = str + keyName[key] + people.spouses[people.spouses.length - 1][key] + "<br>"
             }
+        }
+        return str
+    },
+    "ext": function(family, people) {
+        let str = ""
+        if (people.politicalStatus != null) {
+            str = str + "【政治面貌】" + people.politicalStatus + "<br>"
+        }
+        if (people.posts != null) {
+            str = str + "【历任职务】" + people.posts[people.posts.length - 1] + "<br>"
+        }
+        if (people.ext != null && people.ext[0].note != null) {
+            str = str + "【备注】" + people.ext[0].note + "<br>"
         }
         return str
     }
@@ -168,6 +190,7 @@ function renderFamilyTable(family, contentDiv) {
         for (var colKey in colName) {
             var cell = document.createElement("td")
             cell.id = "td" + i + colKey
+            cell.className = cell.className + "td-" + colKey
             var people = familyPeopleInTable[i]
             value = people[colKey]
             if (colMapper[colKey] != undefined) {

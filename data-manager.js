@@ -65,6 +65,7 @@ function callback(response) {
         fetchHandler(cacheJson.response.data)
         allPeople = cacheJson.response.data
     }
+    console.log(allPeople)
 }
 
 function fetchFamilyInfo(peopleID) {

@@ -22,6 +22,14 @@ table {
     width: 15%;
 }
 
+#th-ext {
+    width: 20%;
+}
+
+.td-ext, .td-spouses {
+    text-align: left;
+}
+
 #title {
     font-size: x-large;
 }
