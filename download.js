@@ -1,6 +1,22 @@
 function downloadHandler(params, contentDiv) {
+    // 封面
+    let coverDiv = document.createElement("div")
+    coverDiv.innerHTML = "西同下村赵氏家谱"
+    coverDiv.id = "cover"
+    contentDiv.appendChild(coverDiv)
+    let pageSperate1 = document.createElement("div")
+    pageSperate1.style["page-break-after"] = "always"
+    pageSperate1.innerHTML = "<br>"
+    contentDiv.appendChild(pageSperate1)
     // 祖训 todo
-
+    let zuxunDiv = document.createElement("div")
+    zuxunDiv.innerHTML = "祖训<br>" + zuxun()
+    zuxunDiv.id = "zuxun"
+    contentDiv.appendChild(zuxunDiv)
+    let pageSperate2 = document.createElement("div")
+    pageSperate2.style["page-break-after"] = "always"
+    pageSperate2.innerHTML = "<br>"
+    contentDiv.appendChild(pageSperate2)
     // 家庭
     let rootID = 1
     let familyIDMap = {rootID: 1}
@@ -36,6 +52,6 @@ function downloadHandler(params, contentDiv) {
         contentDiv.appendChild(pageSperate)
     }
     setTimeout(function() {
-        window.print()
+        // window.print()
     }, 1000)
 }

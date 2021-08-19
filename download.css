@@ -1,1 +1,15 @@
-@import "./familyTable.css"
+@import "./familyTable.css";
+
+#cover, #zuxun {
+    font-size: x-large;
+    font-family: 'mao';
+}
+
+#cover {
+    text-align: center;
+}
+
+#zuxun {
+    text-align: center;
+    writing-mode:lr-tb;
+}

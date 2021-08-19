@@ -56,7 +56,7 @@ function callback(response) {
     }
     let cache = localStorage.getItem(cacheKey)
     let cacheJson = JSON.parse(cache)
-    if (cacheJson == null || cacheJson.response == null || cacheJson.response.version == null || cacheJson.response.version != response.version) {
+    if (cacheJson.response == null || cacheJson.response.version == null || cacheJson.response.version != response.version) {
         cacheJson.response = response
         localStorage.setItem(cacheKey, JSON.stringify(cacheJson))
         fetchHandler(response.data)
@@ -65,7 +65,6 @@ function callback(response) {
         fetchHandler(cacheJson.response.data)
         allPeople = cacheJson.response.data
     }
-    console.log(allPeople)
 }
 
 function fetchFamilyInfo(peopleID) {
@@ -111,6 +110,10 @@ function groupByGen() {
         if (people.genID == null) {
             continue
         }
+        let isZhao = (people.fatherID != undefined && people.fatherID != 0)
+        if (!isZhao && people.id != 1) {
+            continue
+        }
         if (map[people.genID] == null) {
             map[people.genID] = new Array()
         }
@@ -131,4 +134,9 @@ function peopleIsFamilyOwnerWithID(peopleID) {
         return true
     }
     return false
+}
+
+function zuxun() {
+    return "几长者共谋，立家案百愿呼。村东老茔穴尽水，各支于清末时，民故，觅佳城立墓，分而仰先。为聚祖力量，歌祖宗功德，永言孝思，而立我族家案。" + 
+    "定立我族家规家训，以规范后人；记载族人功德，以勉励后人。强优我族，众志成城。虽社稷传优去弼，过己训群，优秀后人，贡献社会。再者，名慧（讳？）不乱，长幼有序，扬我族威。长辈存载力，宜子宜孙，千古留芳"
 }
