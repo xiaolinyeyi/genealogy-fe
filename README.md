@@ -18,46 +18,16 @@
 
 总之，在预算有限（免费）的情况下，这些功能也足够使用了
 
-# 数据管理
+# 功能说明
 
-## server侧
+## 首页
 
-> 考虑到向leancloud请求数据所产生的费用，server请求一次后持有全量人员信息，这些内存占用并不会达到CFC云函数收费的标准
+## 家族传承
 
-```flow
-start=>start: 收到fetch请求
-userValid=>condition: 用户信息是否合法
-timestampValid=>condition: 用户缓存版本是否过期
-userInvalid=>operation: 返回用户不合法
-expired=>operation: 返回全量数据，并携带数据版本信息
-unexpired=>operation: 返回缓存可用
-end=>end: 响应结束
+## 家庭成员
 
-start->userValid
-userValid(no)->userInvalid->end
-userValid(yes)->timestampValid
-timestampValid(no)->expired->end
-timestampValid(yes)->unexpired->end
-```
+# 功能实现
+见wiki
 
-## fe侧
-
-> 考虑到请求CFC云函数所产生的费用，fe侧缓存全量的人员信息，在页面刷新时，server仅在必要时返回全量数据
-
-```flow
-start=>start: 携带用户信息和本地缓存版本发起请求
-response=>operation: 收到server响应
-userValid=>condition: 用户信息是否合法
-cacheValid=>condition: 缓存是否可用
-update=>operation: 更新缓存
-end=>end: 展示数据
-start->response->userValid(no)->end
-userValid(yes)->cacheValid(yes)->end
-cacheValid(no)->update->end
-```
-
-# people数据结构
-
-# 树形展示代际关系
-
-# 表格展示家庭关系
+# 联系我们
+email: xiaolinyeyi@163.com
