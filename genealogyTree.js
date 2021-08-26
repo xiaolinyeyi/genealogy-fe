@@ -1,27 +1,33 @@
-let tdWidth = 50
 function genealogyTreeHandler(params, contentDiv) {
-    let nodes = []
-    let rootID = 1
-    for (let peopleID in allPeople) {
-        let people = allPeople[peopleID]
-        console.log(people)
-        if (people.id == rootID) {
-            nodes.push({'id': people.id, 'name': people.name})
-        } else if (people.fatherID != undefined) {
-            nodes.push({'id': people.id, 'name': people.name, 'pid': people.fatherID})
+    let container = document.createElement('div')
+    container.id = 'chart-container'
+    contentDiv.appendChild(container)
+    let peopleNode = new Map()
+    let genGroups = groupByGen()
+    let maxGen = Object.keys(genGroups).length
+    // 动规。从最小辈开始，计算节点信息，尤其是children节点，加到父节点上，直至父节点为root
+    for (let i = maxGen; i > 0; i--) { 
+        let peopleInGen = genGroups[i]
+        for (let j = 0; j < peopleInGen.length; j++) {
+            let people = allPeople[peopleInGen[j]]
+            let node = {'name': people.name}
+            if (people.children != undefined) {
+                let childrenNode = []
+                for (let ci = 0; ci < people.children.length; ci++) {
+                    childrenNode.push(peopleNode[people.children[ci]])
+                    delete peopleNode[people.children[ci]] // 删除缓存的孩子节点信息，节省内存
+                }
+                node['children'] = childrenNode
+            }
+            peopleNode[people.id] = node
         }
     }
-    loadFile('./OrgChartJS/OrgChart.js', callback = function(){
-        var chart = new OrgChart(contentDiv, {
-            nodeBinding: {
-                field_0: "name"
-            },
-            nodes: nodes,
-            zoom: {
-                speed: 10,
-                smooth: 5
-            }
+    loadFile("https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.1.1/js/jquery.orgchart.min.js", callback = function() {
+        var oc = $('#chart-container').orgchart({
+            'data': peopleNode[1],
         });
     })
-    
+    loadFile("https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.1.1/css/jquery.orgchart.min.css", callback = function() {
+        
+    })
 }
