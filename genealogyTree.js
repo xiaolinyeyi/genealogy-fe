@@ -25,9 +25,10 @@ function genealogyTreeHandler(params, contentDiv) {
     loadFile("https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.1.1/js/jquery.orgchart.min.js", callback = function() {
         var oc = $('#chart-container').orgchart({
             'data': peopleNode[1],
+            'nodeTemplate': function(data) {
+                return '<div class="nodeTemplate">' + data.name + '</div>'
+            }
         });
     })
-    loadFile("https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.1.1/css/jquery.orgchart.min.css", callback = function() {
-        
-    })
+    loadFile("https://cdnjs.cloudflare.com/ajax/libs/orgchart/3.1.1/css/jquery.orgchart.min.css", callback = function() { })
 }

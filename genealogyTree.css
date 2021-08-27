@@ -2,3 +2,9 @@
   overflow: auto;
   text-align: center;
 }
+
+.nodeTemplate {
+  border: 1px solid black;
+  height: 70px;
+  width: 20px;
+}
