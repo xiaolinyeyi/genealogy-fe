@@ -4,7 +4,10 @@
 }
 
 .nodeTemplate {
-  border: 1px solid black;
+  border: 1px solid rgba(217,83,79,.8);
   height: 70px;
   width: 20px;
+  border-radius: 5px;
+  margin: 0px 3px 0px 3px;
+  padding: 2px;
 }

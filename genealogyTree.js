@@ -10,7 +10,7 @@ function genealogyTreeHandler(params, contentDiv) {
         let peopleInGen = genGroups[i]
         for (let j = 0; j < peopleInGen.length; j++) {
             let people = allPeople[peopleInGen[j]]
-            let node = {'name': people.name}
+            let node = {'name': people.name, 'id': people.id, 'isOwner': peopleIsFamilyOwnerWithID(people.id)}
             if (people.children != undefined) {
                 let childrenNode = []
                 for (let ci = 0; ci < people.children.length; ci++) {
@@ -26,7 +26,11 @@ function genealogyTreeHandler(params, contentDiv) {
         var oc = $('#chart-container').orgchart({
             'data': peopleNode[1],
             'nodeTemplate': function(data) {
-                return '<div class="nodeTemplate">' + data.name + '</div>'
+                if (data.isOwner) {
+                    return '<div class="nodeTemplate"><a href="#familyTable?id=' + data.id + '">' + data.name + '</a></div>'
+                } else {
+                    return '<div class="nodeTemplate">' + data.name + '</div>'
+                }
             }
         });
     })
