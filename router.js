@@ -1,10 +1,11 @@
 function dispatch(event) {
     let scheme = location.hash.split("#")[1]
+    let defaultScheme = "genealogyTree"
     if (scheme == null) {
-        location.hash = "#home"
+        location.hash = defaultScheme
         return
     }
-    let path = "home"
+    let path = defaultScheme
     let queryParams = new Map()
     let pathAndQuery = scheme.split("?")
     if (pathAndQuery != null) {
