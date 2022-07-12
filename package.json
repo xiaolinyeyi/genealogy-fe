@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "axios": "^0.27.2",
-    "vue-jsonp": "^2.0.0"
+    "vue-jsonp": "^2.0.0",
+    "vue-organization-chart": "^1.1.6",
+    "vue3-organization-chart": "^1.9.3"
   }
 }
