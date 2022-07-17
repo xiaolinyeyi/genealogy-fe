@@ -1,6 +1,6 @@
 <template>
   <div>
-    <navigation-bar v-if="allPeople"></navigation-bar>
+    <navigation-bar v-if="allPeopleRef.value"></navigation-bar>
     <router-view></router-view>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
   name: 'App',
   data: function() {
     return {
-      allPeople: null
+      // allPeople: null
     }
   },
   computed: {
@@ -36,8 +36,9 @@ export default {
       cacheMap.local.userInfo = userInfo
     }
     // test just cache
-    this.allPeople = cacheMap.response.data
-    this.allPeopleRef.value = this.allPeople
+    this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
+    console.log(this.allPeopleRef.value)
+    // this.allPeople = cacheMap.response.data
 /*
     let cacheVersion = ''
     if (cacheMap.response != undefined && cacheMap.response.version != undefined) {
@@ -57,13 +58,14 @@ export default {
       if (cacheVersion != response.version) { // cache需要更新
         cacheMap.response = response
         localStorage.setItem(this.cacheKey, JSON.stringify(cacheMap))
+        this.allPeopleRef.value = response.data
         this.allPeople = response.data
         console.log('没有命中缓存')
       } else { // 直接使用本地缓存
         console.log('命中缓存')
+        this.allPeopleRef.value = cacheMap.response.data
         this.allPeople = cacheMap.response.data
       }
-      this.allPeopleRef.value = this.allPeople
     })
     */
   },

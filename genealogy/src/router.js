@@ -7,6 +7,10 @@ import GenealogyTable from './components/GenealogyTable.vue'
 const routes = [
     {
         path: "/",
+        redirect: "/home"
+    },
+    {
+        path: "/home",
         name: "home",
         component: GenealogyHome,
     },
