@@ -4,7 +4,7 @@ class People {
             return null
         }
         this.metadata = peopleInfo
-
+        this.id = peopleInfo.id
         this.genID = peopleInfo.genID
         this.name = peopleInfo.name
         this.sexDes = this.sexDes()
@@ -21,7 +21,7 @@ class People {
     }
     birthdayDes() {
         if (this.metadata.ext != null && this.metadata.ext[0]["birthday"] != null) {
-            return this.ext[0]["birthday"]
+            return this.metadata.ext[0]["birthday"]
         }
         if (this.metadata.birthday == null) {
             return "不详"
@@ -71,29 +71,25 @@ class People {
         let str = ""
         const people = this.metadata
         if (people.politicalStatus != null) {
-            str = str + "【政治面貌】" + people.politicalStatus + "<br>"
+            str = str + "【政治面貌】" + people.politicalStatus + "\n"
         }
         if (people.posts != null) {
-            str = str + "【历任职务】" + people.posts[people.posts.length - 1] + "<br>"
+            str = str + "【历任职务】" + people.posts[people.posts.length - 1] + "\n"
         }
         if (people.ext != null && people.ext[0].note != null) {
-            str = str + "【备注】" + people.ext[0].note + "<br>"
+            str = str + "【备注】" + people.ext[0].note + "\n"
         }
         return str
     }
 }
 
 Map.prototype.getFamilyInfo = function(peopleID) {
-    console.log('get family info, id: ' + peopleID)
     const metadata = this.get(peopleID)
-    console.log('get family info: ' + metadata)
     let people = new People(metadata)
-    console.log(people)
     if (people == null || people.sex == false) {
         return null
     } 
     people.relationship = "户主"
-
     var father = null
     if (metadata.fatherID != null) {
         father = new People(this.get(metadata.fatherID.toString()))
@@ -153,5 +149,6 @@ Map.prototype.getFamilyInfo = function(peopleID) {
         "father": father, 
         "mother": mother, 
         "marriage": marriage, 
-        "children": children}
+        "children": children
+    }
 }

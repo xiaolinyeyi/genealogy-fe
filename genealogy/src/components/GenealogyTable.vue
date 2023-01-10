@@ -1,7 +1,11 @@
 <template>
     <div v-if="family">
         <div>赵氏第{{family.gen}}代</div>
-        <div v-if="family.father">上一代户主：{{family.father.name}}</div>
+        <div v-if="family.father">上一代户主：
+            <router-link :to="{name: 'table', query: {id: family.father.id}}" @click="familyOwnerDidClick(family.father.id)">
+                {{family.father.name}}
+            </router-link>
+        </div>
         <div>户主：{{family.owner.name}}</div>
         <div>
             <el-table :data="tableData" style="width: 100%">
@@ -57,10 +61,11 @@ export default {
             peopleID = "1"
         }
         this.family = this.allPeople.value.getFamilyInfo(peopleID)
-        console.log('--------family-------')
-        console.log(this.family)
     },
     methods: {
+        familyOwnerDidClick(peopleID) {
+            this.family = this.allPeople.value.getFamilyInfo(peopleID.toString())
+        }
     }
 }
 </script>

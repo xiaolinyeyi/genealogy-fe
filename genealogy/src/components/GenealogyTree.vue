@@ -7,7 +7,18 @@
     :horizontal=false
     :collapsable=false
     :scalable=false
-    v-if="rootNode"/>
+    v-if="rootNode">
+    <template v-slot="{node}">
+        <div style="width:20px">
+            <router-link :to="{name: 'table', query: {id: node.id}}" v-if="peopleIsFamilyOwnerWithID(node.id)">
+                {{node.label}}
+            </router-link>
+            <div v-else>
+                {{node.label}}
+            </div>
+        </div>
+    </template>
+    </vue3-tree-org>
     <div v-else>数据加载中</div>
   </div>
 </template>
@@ -53,6 +64,7 @@ export default {
         },
         // 是否为户主（男性，有配偶或者孩子）
         peopleIsFamilyOwnerWithID: function(peopleID) {
+            if (peopleID == undefined) { return false }
             let people = this.allPeople.value.get(peopleID.toString())
             if (people.sex == false) {
                 return false
