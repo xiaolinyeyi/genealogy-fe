@@ -2,14 +2,24 @@
     <div v-if="family">
         <div>赵氏第{{family.gen}}代</div>
         <div v-if="family.father">上一代户主：
-            <router-link :to="{name: 'table', query: {id: family.father.id}}" @click="familyOwnerDidClick(family.father.id)">
+            <router-link :to="{name: 'table', query: {id: family.father.id}}" 
+            @click="familyOwnerDidClick(family.father.id)">
                 {{family.father.name}}
             </router-link>
         </div>
         <div>户主：{{family.owner.name}}</div>
         <div>
-            <el-table :data="tableData" style="width: 100%">
-                <el-table-column prop="name" label="姓名"></el-table-column>
+            <el-table :data="tableData" style="width: 100%" border>
+                <el-table-column prop="name" label="姓名">
+                    <template #default="scope">
+                        <router-link v-if="scope.row.id != this.family.owner.id && scope.row.isFamilyOwner()" 
+                        :to="{name: 'table', query: {id: scope.row.id}}" 
+                        @click="familyOwnerDidClick(scope.row.id)">
+                            {{ scope.row.name }}
+                        </router-link>
+                        <span v-else>{{ scope.row.name }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column prop="birthdayDes" label="生日"></el-table-column>
                 <el-table-column prop="sexDes" label="性别"></el-table-column>
                 <el-table-column prop="relationship" label="户主关系"></el-table-column>

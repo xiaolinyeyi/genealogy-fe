@@ -16,6 +16,18 @@ class People {
         this.lastHabitation = this.lastHabitation()
         this.extDes = this.extDes()
     }
+    isFamilyOwner() {
+        if (this.metadata.sex == false) {
+            return false
+        }
+        if (this.metadata.spouses != null && this.metadata.spouses.length > 0) {
+            return true
+        }
+        if (this.metadata.children != null && this.metadata.children.length > 0) {
+            return true
+        }
+        return false
+    }
     sexDes() {
         return this.metadata.sex == false ? "女" : "男"
     }
@@ -152,3 +164,5 @@ Map.prototype.getFamilyInfo = function(peopleID) {
         "children": children
     }
 }
+
+export default People

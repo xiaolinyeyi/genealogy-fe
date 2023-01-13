@@ -25,6 +25,7 @@
 
 <script>
 import { inject } from 'vue'
+import People from '@/utils/family.js'
 
 export default {
     data() {
@@ -65,17 +66,9 @@ export default {
         // 是否为户主（男性，有配偶或者孩子）
         peopleIsFamilyOwnerWithID: function(peopleID) {
             if (peopleID == undefined) { return false }
-            let people = this.allPeople.value.get(peopleID.toString())
-            if (people.sex == false) {
-                return false
-            }
-            if (people.spouses != null && people.spouses.length > 0) {
-                return true
-            }
-            if (people.children != null && people.children.length > 0) {
-                return true
-            }
-            return false
+            let metadata = this.allPeople.value.get(peopleID.toString())
+            let people = new People(metadata)
+            return people.isFamilyOwner()
         },
         // 生成orgchart需要的格式
         generatePeopleNode: function(allPeople) {
