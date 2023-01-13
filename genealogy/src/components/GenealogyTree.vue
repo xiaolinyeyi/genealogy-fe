@@ -1,26 +1,28 @@
 <template>
-  <div style="height: 4000px;width: 10000px;">
-  <!--tree-org属性说明：https://sangtian152.github.io/vue3-tree-org/demo/#attributes-->
-    <vue3-tree-org 
-    :data="rootNode"           
-    :disabled=true
-    :horizontal=false
-    :collapsable=false
-    :scalable=false
-    v-if="rootNode">
-    <template v-slot="{node}">
-        <div style="width:20px">
-            <router-link :to="{name: 'table', query: {id: node.id}}" v-if="peopleIsFamilyOwnerWithID(node.id)">
-                {{node.label}}
-            </router-link>
-            <div v-else>
-                {{node.label}}
+  <el-scrollbar>
+    <div style="width:5000px;height:2000px">
+        <!--tree-org属性说明：https://sangtian152.github.io/vue3-tree-org/demo/#attributes-->
+        <vue3-tree-org 
+        :data="rootNode"           
+        :disabled=true
+        :horizontal=false
+        :collapsable=false
+        :scalable=false
+        v-if="rootNode">
+        <template v-slot="{node}">
+            <div style="width:20px">
+                <router-link :to="{name: 'table', query: {id: node.id}}" v-if="peopleIsFamilyOwnerWithID(node.id)">
+                    {{node.label}}
+                </router-link>
+                <div v-else>
+                    {{node.label}}
+                </div>
             </div>
-        </div>
-    </template>
-    </vue3-tree-org>
-    <div v-else>数据加载中</div>
-  </div>
+        </template>
+        </vue3-tree-org>
+        <div v-else>数据加载中</div>
+    </div>
+  </el-scrollbar>
 </template>
 
 <script>
