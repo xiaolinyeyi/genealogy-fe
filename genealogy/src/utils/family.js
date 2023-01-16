@@ -28,6 +28,9 @@ class People {
         }
         return false
     }
+    isDead() {
+        return this.deathdayDes != undefined && this.deathdayDes != ""
+    }
     sexDes() {
         return this.metadata.sex == false ? "女" : "男"
     }

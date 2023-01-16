@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import GenealogyHome from './components/GenealogyHome.vue'
 import GenealogyTree from './components/GenealogyTree.vue'
 import GenealogyTable from './components/GenealogyTable.vue'
+import GenealogySacrifice from './components/GenealogySacrifice.vue'
 
 //路由数组
 const routes = [
@@ -23,6 +24,11 @@ const routes = [
         path: "/table",
         name: "table",
         component: GenealogyTable
+    },
+    {
+        path: "/sacrifice",
+        name: "sacrifice",
+        component: GenealogySacrifice
     }
 ]
 //路由对象

@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar>
-    <div style="width:5000px;height:2000px">
+    <div style="width:5000px;height:1200px">
         <!--tree-org属性说明：https://sangtian152.github.io/vue3-tree-org/demo/#attributes-->
         <vue3-tree-org 
         :data="rootNode"           

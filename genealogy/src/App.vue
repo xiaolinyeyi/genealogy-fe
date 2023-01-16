@@ -1,4 +1,5 @@
 <template>
+  <h1>西同下赵氏家谱</h1>
   <div>
     <navigation-bar v-if="allPeopleRef.value"></navigation-bar>
     <router-view></router-view>
