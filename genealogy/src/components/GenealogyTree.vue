@@ -26,31 +26,33 @@
 </template>
 
 <script>
-import { inject } from 'vue'
+import { inject, watch } from 'vue'
 import People from '@/utils/family.js'
 
 export default {
     data() {
         return {
+            allPeople: null,
             rootNode: null
         }
     },
-    setup() {
-        const allPeople = inject("allPeopleRef")
+    created() {
+        const globalVars = inject("globalVars")
+        this.allPeople = JSON.parse(JSON.stringify(globalVars.allPeople))
+        watch(() => globalVars.allPeople, (newValue) => {
+            this.allPeople = JSON.parse(JSON.stringify(newValue))
+            const node = this.generatePeopleNode(this.allPeople)
+            this.rootNode = node
+        })
         return {
-            allPeople
+            globalVars
         }
-    },
-    mounted() { // 有数据之后才开始加载子组件
-        console.log('------genearte tree-------')
-        const node = this.generatePeopleNode(this.allPeople.value)
-        this.rootNode = node
     },
     methods: {
         groupByGen: function(allPeople) { // 每代人放到一个数组中
             var map = new Map()
-            for (var peopleKV of allPeople) {
-                const people = peopleKV[1]
+            for (var key in allPeople) {
+                const people = allPeople[key]
                 if (people.genID == null) {
                     continue
                 }
@@ -68,12 +70,15 @@ export default {
         // 是否为户主（男性，有配偶或者孩子）
         peopleIsFamilyOwnerWithID: function(peopleID) {
             if (peopleID == undefined) { return false }
-            let metadata = this.allPeople.value.get(peopleID.toString())
+            let metadata = this.allPeople[peopleID.toString()]
             let people = new People(metadata)
             return people.isFamilyOwner()
         },
         // 生成orgchart需要的格式
         generatePeopleNode: function(allPeople) {
+            if (allPeople == undefined) {
+                return undefined
+            }
             let peopleNode = new Map()
             let genGroups = this.groupByGen(allPeople)
             let maxGen = Object.keys(genGroups).length
@@ -81,7 +86,7 @@ export default {
             for (let i = maxGen; i > 0; i--) { 
                 let peopleInGen = genGroups[i]
                 for (let j = 0; j < peopleInGen.length; j++) {
-                    let people = allPeople.get(peopleInGen[j].toString())
+                    let people = allPeople[peopleInGen[j].toString()]
                     let node = {'label': people.name, 'id': people.id, 'isOwner': this.peopleIsFamilyOwnerWithID(people.id)}
                     if (people.children != undefined) {
                         let childrenNode = []
