@@ -10,27 +10,42 @@
     </el-timeline>
 </template>
 <script>
-import { inject } from 'vue'
-import People from '@/utils/family.js'
+import { inject, watch } from 'vue'
+import People from '@/utils/people.js'
 export default {
     data() {
         return {
+            globalVars: null,
             ancestors: []
         }
     },
-    setup() {
-        const allPeople = inject("allPeopleRef")
+    created() {
+        const globalVars = inject("globalVars")
+        this.globalVars = globalVars
+        watch(() => globalVars.allPeople, () => {
+            this.createSacrificeArr()
+        })
         return {
-            allPeople
+            globalVars
         }
     },
     mounted() {
         this.createSacrificeArr()
     },
     methods: {
+        allPeople() {
+            if (Object.keys(this.globalVars.allPeople).length > 0) {
+                const allPeople = JSON.parse(JSON.stringify(this.globalVars.allPeople))
+                return allPeople
+            } else {
+                return null
+            }
+        },
         createSacrificeArr() {
-            for (const peopleKV of this.allPeople.value) {
-                const metadata = peopleKV[1]
+            this.ancestors = []
+            const allPeople = this.allPeople()
+            for (const key in allPeople) {
+                const metadata = allPeople[key]
                 let people = new People(metadata)
                 if (people.genID == undefined) {
                     continue

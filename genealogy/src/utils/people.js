@@ -55,7 +55,9 @@ class People {
             if (year - birthYear > 100) { // 超过100，认为已经去世
                 return "不详"
             }
-        } else if (this.metadata.birthday == null && this.metadata.genID < 6) { // 有坑，别人的家谱就会出bug
+        } else if (this.isSameFamily() && this.birthdayDes == "不详") { // 本家生日为不详，一定已经去世，不可考了
+            return "不详"
+        } else if (this.birthdayDes == "不详" && this.metadata.genID < 6) { // 有坑，别人的家谱就会出bug
             return "不详"
         } else {
             return ""
@@ -95,6 +97,12 @@ class People {
             str = str + "【备注】" + people.ext[0].note + "\n"
         }
         return str
+    }
+    isSameFamily() {
+        if (this.id == 1) {
+            return true
+        }
+        return this.metadata.fatherID != undefined
     }
 }
 
