@@ -27,7 +27,7 @@
 
 <script>
 import { inject, watch } from 'vue'
-import People from '@/utils/family.js'
+import People from '@/utils/people.js'
 
 export default {
     data() {
@@ -37,9 +37,11 @@ export default {
         }
     },
     created() {
+        console.log("tree created")
         const globalVars = inject("globalVars")
         this.allPeople = JSON.parse(JSON.stringify(globalVars.allPeople))
         watch(() => globalVars.allPeople, (newValue) => {
+            console.log("tree watch")
             this.allPeople = JSON.parse(JSON.stringify(newValue))
             const node = this.generatePeopleNode(this.allPeople)
             this.rootNode = node
@@ -47,6 +49,10 @@ export default {
         return {
             globalVars
         }
+    },
+    mounted() {
+        console.log("tree mounted")
+        this.rootNode = this.generatePeopleNode(this.allPeople)
     },
     methods: {
         groupByGen: function(allPeople) { // 每代人放到一个数组中

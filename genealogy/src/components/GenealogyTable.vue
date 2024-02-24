@@ -37,11 +37,14 @@
 </template>
 
 <script>
-import { inject } from 'vue'
-import { useRoute } from 'vue-router'
+import { inject, watch } from 'vue'
+import { useRoute } from 'vue-router' 
+import Family from '@/utils/family'
+
 export default {
     data() {
         return {
+            globalVars: null,
             family: null,
         }
     },
@@ -59,22 +62,45 @@ export default {
             return familyPeopleInTable
         },
     },
-    setup() {
-        const allPeople = inject("allPeopleRef")
+    created() {
+        console.log("table created")
+        const globalVars = inject("globalVars")
+        this.globalVars = globalVars
+        watch(() => globalVars.allPeople, () => {
+            console.log("table watch")
+            this.updateFamilyByQuery()
+        })
         return {
-            allPeople
+            globalVars
         }
     },
     mounted() {
-        let peopleID = useRoute().query.id
-        if (peopleID == undefined) {
-            peopleID = "1"
+        console.log("table mounted")
+        if (this.allPeople() == null) {
+            return
         }
-        this.family = this.allPeople.value.getFamilyInfo(peopleID)
+        this.updateFamilyByQuery()
     },
     methods: {
+        allPeople() {
+            if (Object.keys(this.globalVars.allPeople).length > 0) {
+                const allPeople = JSON.parse(JSON.stringify(this.globalVars.allPeople))
+                return allPeople
+            } else {
+                return null
+            }
+        },
+        updateFamilyByQuery() {
+            let peopleID = useRoute().query.id
+            if (peopleID == undefined) {
+                peopleID = "1"
+            }
+            const allPeople = this.allPeople()
+            this.family = new Family(allPeople, peopleID)
+        },
         familyOwnerDidClick(peopleID) {
-            this.family = this.allPeople.value.getFamilyInfo(peopleID.toString())
+            const allPeople = this.allPeople()
+            this.family = new Family(allPeople, peopleID.toString())
         }
     }
 }
