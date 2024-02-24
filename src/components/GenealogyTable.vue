@@ -1,13 +1,15 @@
 <template>
     <div v-if="family">
-        <div>赵氏第{{family.owner.genID}}代</div>
-        <div v-if="family.father">上一代户主：
-            <router-link :to="{name: 'table', query: {id: family.father.id}}" 
-            @click="familyOwnerDidClick(family.father.id)">
-                {{family.father.name}}
-            </router-link>
+        <div style="text-align: left;">
+            <div>赵氏第 {{family.owner.genID}} 代</div>
+            <div v-if="family.father">上一代户主：
+                <router-link :to="{name: 'table', query: {id: family.father.id}}" 
+                @click="familyOwnerDidClick(family.father.id)">
+                    {{family.father.name}}
+                </router-link>
+            </div>
+            <div>户主：{{family.owner.name}}</div>
         </div>
-        <div>户主：{{family.owner.name}}</div>
         <div>
             <el-table :data="tableData" style="width: 100%" border>
                 <el-table-column prop="name" label="姓名">

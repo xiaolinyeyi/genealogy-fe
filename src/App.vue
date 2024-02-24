@@ -62,10 +62,12 @@ export default {
         this.globalVars.allPeople = response.data
         this.allPeople = response.data
         console.log('没有命中缓存')
+        console.log(this.allPeople)
       } else { // 直接使用本地缓存
         console.log('命中缓存')
         this.globalVars.allPeople = cacheMap.response.data
         this.allPeople = cacheMap.response.data
+        console.log(this.allPeople)
       }
     })
     

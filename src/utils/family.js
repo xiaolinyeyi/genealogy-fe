@@ -2,7 +2,6 @@ import People from "./people"
 
 class Family {
     constructor(allPeople, ownerID) {
-        console.log(allPeople)
         if (allPeople == null || allPeople == undefined || Object.keys(allPeople).length == 0) {
             return null
         }

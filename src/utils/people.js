@@ -55,9 +55,9 @@ class People {
             if (year - birthYear > 100) { // 超过100，认为已经去世
                 return "不详"
             }
-        } else if (this.isSameFamily() && this.birthdayDes == "不详") { // 本家生日为不详，一定已经去世，不可考了
+        } else if (this.isSameFamily() && typeof this.birthdayDes != "number") { // 本家生日非数字，一定已经去世，不可考了
             return "不详"
-        } else if (this.birthdayDes == "不详" && this.metadata.genID < 6) { // 有坑，别人的家谱就会出bug
+        } else if (typeof this.birthdayDes != "number" && this.metadata.genID < 6) { // 有坑，别人的家谱就会出bug
             return "不详"
         } else {
             return ""
