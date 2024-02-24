@@ -1,9 +1,12 @@
 <template>
-      <el-timeline style="margin-top:50px">
+      <el-timeline style="margin-top:10px">
         <el-timeline-item v-for="(ancestor, index) in ancestors" :key="index"> 
             <el-row>
                 <el-col :span="1" v-for="(people, index) in ancestor" :key="index">
-                    {{ people.name }}
+                    <el-container>
+                        <el-main>{{ people.name }}</el-main>
+                        <el-footer>{{ people.deathdayDes }}</el-footer>
+                    </el-container>
                 </el-col>
             </el-row>
         </el-timeline-item>
@@ -65,3 +68,20 @@ export default {
     }
 }
 </script>
+<style>
+.el-container {
+    width: 70px;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: black;
+    border-style: solid;
+}
+.el-main {
+    width: 10px; 
+    height: 100px; 
+    padding-left: 30px;
+}
+.el-footer {
+    height: 30px;
+}
+</style>

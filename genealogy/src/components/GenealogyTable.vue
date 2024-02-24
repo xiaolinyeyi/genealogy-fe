@@ -91,6 +91,10 @@ export default {
             }
         },
         updateFamilyByQuery() {
+            if (useRoute() == undefined) {
+                console.log("route is null")
+                return
+            }
             let peopleID = useRoute().query.id
             if (peopleID == undefined) {
                 peopleID = "1"
