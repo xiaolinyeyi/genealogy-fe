@@ -5,7 +5,7 @@
                 <el-col :span="1" v-for="(people, index) in ancestor" :key="index">
                     <el-container>
                         <el-main>{{ people.name }}</el-main>
-                        <el-footer>{{ people.deathdayDes }}</el-footer>
+                        <!-- <el-footer>{{ people.birthdayDes + "\n|\n" + people.deathdayDes }}</el-footer> -->
                     </el-container>
                 </el-col>
             </el-row>
@@ -53,6 +53,9 @@ export default {
                 if (people.genID == undefined) {
                     continue
                 }
+                if (people.sexDes === "女") {
+                    continue
+                }
                 if (!people.isDead()) {
                     continue
                 }
@@ -70,18 +73,21 @@ export default {
 </script>
 <style>
 .el-container {
-    width: 70px;
+    width: 50px;
     border-width: 1px;
     border-radius: 5px;
     border-color: black;
     border-style: solid;
 }
+.el-col-1 {
+    max-width: 50px;
+    margin: 1px;
+}
 .el-main {
-    width: 10px; 
     height: 100px; 
-    padding-left: 30px;
+    padding-left: 17px;
 }
 .el-footer {
-    height: 30px;
+    height: 60px;
 }
 </style>
