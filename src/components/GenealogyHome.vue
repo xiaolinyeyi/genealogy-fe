@@ -55,4 +55,8 @@ div, h2 {
 .el-row {
   margin-bottom: 20px;
 }
+.el-col-1 {
+    max-width: 50px;
+    margin: 1px;
+}
 </style>
