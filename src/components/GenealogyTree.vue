@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar>
-    <div style="width:5000px;height:1400px">
+    <div style="width:100vw;height:100vh">
         <!--tree-org属性说明：https://sangtian152.github.io/vue3-tree-org/demo/#attributes-->
         <vue3-tree-org 
         :data="rootNode"           
@@ -8,7 +8,8 @@
         :horizontal=false
         :collapsable=false
         :scalable=false
-        v-if="rootNode">
+        v-if="rootNode"
+        style="margin: 20px;">
         <template v-slot="{node}">
             <div style="width:20px; height: 75px;">
                 <router-link :to="{name: 'table', query: {id: node.id}}" v-if="peopleIsFamilyOwnerWithID(node.id)">
@@ -120,3 +121,10 @@ export default {
     }
   }
 </script>
+
+<style>
+.zm-draggable {
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+</style>
