@@ -25,6 +25,7 @@
         <!-- <div @click="snap">snap</div> -->
     </div>
   </el-scrollbar>
+  <div style="height: 200px;"></div>
 </template>
 
 <script>

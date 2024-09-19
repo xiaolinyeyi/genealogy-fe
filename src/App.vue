@@ -1,26 +1,22 @@
 <template>
-  <h1>西同下赵氏家谱</h1>
+    <h1 v-if="title">{{ title }}</h1>
+    <input type="file" accept=".json" @change="handleSelectFile" :style="{float: title == null ? 'center' : 'right'}"/>
   <div>
-    <navigation-bar v-if="globalVars.allPeople"></navigation-bar>
+    <navigation-bar v-if="allPeople"></navigation-bar>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import NavigationBar from './components/NavigationBar.vue'
-import { jsonp } from 'vue-jsonp'
 import { provide, reactive } from 'vue'
 
 export default {
   name: 'App',
   data: function() {
     return {
-      // allPeople: null
-    }
-  },
-  computed: {
-    cacheKey: function(){
-      return "genealogy.cache"
+      allPeople: null,
+      title: null
     }
   },
   components: {
@@ -31,52 +27,25 @@ export default {
     this.createCacheIfNeeded()
 
     let cacheMap = JSON.parse(localStorage.getItem(this.cacheKey))
-    let userInfo = cacheMap.local.userInfo
-    if (userInfo == undefined) {
-      userInfo = prompt("请输入分配的密码：")
-      cacheMap.local.userInfo = userInfo
-    }
+    // this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
+    // this.allPeople = cacheMap.response.data
+    console.log("creating!!!")
+    console.log(cacheMap)
+
     // test just cache
     // this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
     // console.log(this.allPeopleRef.value)
     // this.allPeople = cacheMap.response.data
     
-    let cacheVersion = ''
-    if (cacheMap.response != undefined && cacheMap.response.version != undefined) {
-      cacheVersion = cacheMap.response.version
-    }
-    this.getPeopleInfo({'userInfo': userInfo, 'version': cacheVersion}, (response) => {
-      if (response.userLevel < 0) {
-        alert("用户信息有误，无权查看")
-        localStorage.removeItem(this.cacheKey)
-        return
-      }
-      if (response.error != undefined) {
-        alert(response.error)
-        localStorage.removeItem(this.cacheKey)
-        return
-      }
-      if (cacheVersion != response.version) { // cache需要更新
-        cacheMap.response = response
-        localStorage.setItem(this.cacheKey, JSON.stringify(cacheMap))
-        this.globalVars.allPeople = response.data
-        this.allPeople = response.data
-        console.log('没有命中缓存')
-        console.log(this.allPeople)
-      } else { // 直接使用本地缓存
-        console.log('命中缓存')
-        this.globalVars.allPeople = cacheMap.response.data
-        this.allPeople = cacheMap.response.data
-        console.log(this.allPeople)
-      }
-    })
-    
   },
   setup() {
     const globalVars = reactive({
+      meta: {},
+      baseInfo: {},
       allPeople: {}
     })
     provide('globalVars', globalVars)
+
     return {
       globalVars
     }
@@ -97,18 +66,34 @@ export default {
         localStorage.setItem(this.cacheKey, JSON.stringify(cache))
       }
     },
-    getPeopleInfo: function(query, handler) {
-      const host = "https://7br8y2rw0tat2.cfc-execute.bj.baidubce.com/genealogy"
-      jsonp(host, {
-        callbackQuery: "callback", // 这俩参数是什么规则 
-        callbackName: "callback", 
-        cmd: "fetch",
-        userInfo: query.userInfo,
-        version: query.version
-      }).then((response) => {
-        handler(response)
-      })
-    },
+    handleSelectFile: function(event) {
+      const file = event.target.files[0]
+      if (file == undefined) {
+        return
+      }
+      const _this = this
+      const reader = new FileReader()
+      reader.onload = function(e) {
+        const fileContent = e.target.result
+        const jsonData = JSON.parse(fileContent)
+
+        // 取meta
+        _this.globalVars.meta = jsonData["meta"]
+        _this.title = _this.globalVars.meta["title"]
+        // 取baseInfo
+        _this.globalVars.baseInfo = jsonData["baseInfo"]
+        // 取allPeople
+        const allPeople = jsonData["allPeople"]
+        let allPeopleMap = new Map()
+        for (var i = 0; i < allPeople.length; i++) {
+          let people = allPeople[i]
+          allPeopleMap[people.id] = people
+        }
+        _this.globalVars.allPeople = allPeopleMap
+        _this.allPeople = allPeopleMap
+      };
+      reader.readAsText(file);
+    }
   }
 }
 

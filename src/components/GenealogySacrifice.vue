@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             globalVars: null,
-            ancestors: []
+            ancestors: [] // 第n代数组
         }
     },
     created() {
