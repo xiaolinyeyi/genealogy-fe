@@ -26,11 +26,12 @@ export default {
   created: function() { // 创建时加载数据
     this.createCacheIfNeeded()
 
-    let cacheMap = JSON.parse(localStorage.getItem(this.cacheKey))
-    // this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
-    // this.allPeople = cacheMap.response.data
+    let cacheLastGenealogy = JSON.parse(localStorage.getItem("lastGenealogy"))
+    if (cacheLastGenealogy != undefined) {
+      this.initGlobalVarsWithJSON(cacheLastGenealogy)
+    }
     console.log("creating!!!")
-    console.log(cacheMap)
+    console.log(cacheLastGenealogy)
 
     // test just cache
     // this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
@@ -76,23 +77,26 @@ export default {
       reader.onload = function(e) {
         const fileContent = e.target.result
         const jsonData = JSON.parse(fileContent)
-
-        // 取meta
-        _this.globalVars.meta = jsonData["meta"]
-        _this.title = _this.globalVars.meta["title"]
-        // 取baseInfo
-        _this.globalVars.baseInfo = jsonData["baseInfo"]
-        // 取allPeople
-        const allPeople = jsonData["allPeople"]
-        let allPeopleMap = new Map()
-        for (var i = 0; i < allPeople.length; i++) {
-          let people = allPeople[i]
-          allPeopleMap[people.id] = people
-        }
-        _this.globalVars.allPeople = allPeopleMap
-        _this.allPeople = allPeopleMap
+        _this.initGlobalVarsWithJSON(jsonData)
+        localStorage.setItem("lastGenealogy", JSON.stringify(jsonData))
       };
       reader.readAsText(file);
+    },
+    initGlobalVarsWithJSON: function(jsonData) {
+      // 取meta
+      this.globalVars.meta = jsonData["meta"]
+      this.title = this.globalVars.meta["title"]
+      // 取baseInfo
+      this.globalVars.baseInfo = jsonData["baseInfo"]
+      // 取allPeople
+      const allPeople = jsonData["allPeople"]
+      let allPeopleMap = new Map()
+      for (var i = 0; i < allPeople.length; i++) {
+        let people = allPeople[i]
+        allPeopleMap[people.id] = people
+      }
+      this.globalVars.allPeople = allPeopleMap
+      this.allPeople = allPeopleMap
     }
   }
 }
