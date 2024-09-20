@@ -43,7 +43,8 @@ export default {
     const globalVars = reactive({
       meta: {},
       baseInfo: {},
-      allPeople: {}
+      allPeople: {},
+      about: {}
     })
     provide('globalVars', globalVars)
 
@@ -97,6 +98,8 @@ export default {
       }
       this.globalVars.allPeople = allPeopleMap
       this.allPeople = allPeopleMap
+      // 取about
+      this.globalVars.about = jsonData["about"]
     }
   }
 }

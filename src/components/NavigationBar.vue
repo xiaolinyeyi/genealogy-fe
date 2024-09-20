@@ -4,6 +4,7 @@
         <el-menu-item index="/tree">家族传承</el-menu-item>
         <el-menu-item index="/table">家庭详情</el-menu-item>
         <el-menu-item index="/sacrifice">供案</el-menu-item>
+        <el-menu-item index="/about">关于</el-menu-item>
     </el-menu>
 </template>
 <script>

@@ -3,6 +3,7 @@ import GenealogyHome from './components/GenealogyHome.vue'
 import GenealogyTree from './components/GenealogyTree.vue'
 import GenealogyTable from './components/GenealogyTable.vue'
 import GenealogySacrifice from './components/GenealogySacrifice.vue'
+import GenealogyAbout from './components/GenealogyAbout.vue'
 
 //路由数组
 const routes = [
@@ -29,6 +30,11 @@ const routes = [
         path: "/sacrifice",
         name: "sacrifice",
         component: GenealogySacrifice
+    },
+    {
+        path: "/about",
+        name: "about",
+        component: GenealogyAbout
     }
 ]
 //路由对象
