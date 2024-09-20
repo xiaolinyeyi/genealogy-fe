@@ -55,8 +55,6 @@ class People {
             if (year - birthYear > 100) { // 超过100，认为已经去世
                 return "不详"
             }
-        } else if (this.isSameFamily() && typeof this.birthdayDes != "number") { // 本家生日非数字，一定已经去世，不可考了
-            return "不详"
         } else if (typeof this.birthdayDes != "number" && this.metadata.genID < 6) { // 有坑，别人的家谱就会出bug
             return "不详"
         } else {
@@ -93,8 +91,8 @@ class People {
         if (people.posts != null) {
             str = str + "【历任职务】" + people.posts[people.posts.length - 1] + "\n"
         }
-        if (people.ext != null && people.ext[0].note != null) {
-            str = str + "【备注】" + people.ext[0].note + "\n"
+        if (people.note != null) {
+            str = str + "【备注】" + people.note + "\n"
         }
         return str
     }

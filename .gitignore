@@ -1,2 +1,6 @@
 /node_modules
 /build
+/dist
+*.zip
+package.json
+package-lock.json
