@@ -41,16 +41,16 @@ class People {
         if (this.metadata.birthday == null) {
             return "不详"
         } else {
-            let date = new Date(this.metadata.birthday.iso)
+            let date = new Date(this.metadata.birthday.date)
             return date.getFullYear()
         }
     }
     deathdayDes() {
         if (this.metadata.deathday != null) {
-            let date = new Date(this.metadata.deathday.iso)
+            let date = new Date(this.metadata.deathday.date)
             return date.getFullYear()
         } else if (this.metadata.birthday != null) {
-            let birthYear = new Date(this.metadata.birthday.iso).getFullYear()
+            let birthYear = new Date(this.metadata.birthday.date).getFullYear()
             let year = new Date().getFullYear()
             if (year - birthYear > 100) { // 超过100，认为已经去世
                 return "不详"
