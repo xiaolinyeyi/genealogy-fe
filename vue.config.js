@@ -1,5 +1,4 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true,
-  publicPath: "/genealogy-fe/"
-})
+const ENV = process.env.NODE_ENV;
+module.exports = {
+      publicPath: ENV === "development" ? "" : "./",
+};
