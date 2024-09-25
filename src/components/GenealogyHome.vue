@@ -1,9 +1,12 @@
 <template>
-    <div v-if="zuxun">
-        <h2>族训</h2>
-        <div>{{ zuxun }}</div>
+    <div v-for="(v, k) in baseInfo" :key="k">
+        <div v-if="typeof v == 'string' && v != ''">
+            <h2>{{ k }}</h2>
+            <div>{{ v }}</div>
+        </div>
     </div>
     <div v-if="zibei">
+        <!-- 字辈表比较特殊，做不了通用的 -->
         <h2>字辈表</h2>
         <el-row :gutter="10" v-for="i in (isMobile ? [0, 1] : [0])" :key="i">
             <el-col :span="isMobile ? 10 : 6" v-for="j in (isMobile ? [0, 1] : [0, 1, 2, 3])" :key="j">
@@ -22,7 +25,7 @@ import { inject, watch } from 'vue'
 export default {
     data() {
         return {
-            zuxun: null,
+            baseInfo: null,
             zibei: null,
             isMobile: false
         }
@@ -31,8 +34,8 @@ export default {
         const globalVars = inject("globalVars")
         watch(() => globalVars.baseInfo, (newValue) => {
             const baseInfo = JSON.parse(JSON.stringify(newValue))
-            this.zuxun = baseInfo["zuxun"]
-            this.zibei = baseInfo["zibei"]
+            this.baseInfo = baseInfo
+            this.zibei = baseInfo["字辈表"]
         })
         return {
             globalVars
@@ -60,8 +63,8 @@ export default {
 
         const globalVars = inject("globalVars")
         const baseInfo = JSON.parse(JSON.stringify(globalVars.baseInfo))
-        this.zuxun = baseInfo["zuxun"]
-        this.zibei = baseInfo["zibei"]
+        this.baseInfo = baseInfo
+        this.zibei = baseInfo["字辈表"]
     }
 }
 </script>
