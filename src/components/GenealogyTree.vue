@@ -31,7 +31,7 @@
 <script>
 import { inject, watch } from 'vue'
 import People from '@/utils/people.js'
-import html2canvas from 'html2canvas'
+// import html2canvas from 'html2canvas'
 
 export default {
     data() {
@@ -114,10 +114,10 @@ export default {
         /// 截图
         snap: function() {
             let tree = document.getElementsByClassName("tree-org")[0]
-            html2canvas(tree).then((canvas) => {
-                // 这里可以将 canvas 添加到页面中或者进行其他操作
-                document.body.appendChild(canvas);
-            })
+            // html2canvas(tree).then((canvas) => {
+            //     // 这里可以将 canvas 添加到页面中或者进行其他操作
+            //     document.body.appendChild(canvas);
+            // })
         }
     }
   }
