@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import GenealogyHome from './components/GenealogyHome.vue'
 import GenealogyTree from './components/GenealogyTree.vue'
 import GenealogyTable from './components/GenealogyTable.vue'
@@ -39,7 +39,7 @@ const routes = [
 ]
 //路由对象
 const router = createRouter({
-    history: createWebHashHistory(process.env.BASE_URL),
+    history: createWebHashHistory(),
     routes //上面的路由数组
 })
 

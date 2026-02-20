@@ -22,16 +22,16 @@
         </template>
         </vue3-tree-org>
         <div v-else>数据加载中</div>
-        <!-- <div @click="snap">snap</div> -->
     </div>
   </el-scrollbar>
+  <!-- <div @click="snap">snap</div> -->
   <div style="height: 200px;"></div>
 </template>
 
 <script>
 import { inject, watch } from 'vue'
 import People from '@/utils/people.js'
-// import html2canvas from 'html2canvas'
+import html2canvas from 'html2canvas'
 
 export default {
     data() {
@@ -114,11 +114,11 @@ export default {
         /// 截图
         snap: function() {
             console.log("snap")
-            // let tree = document.getElementsByClassName("tree-org")[0]
-            // html2canvas(tree).then((canvas) => {
-            //     // 这里可以将 canvas 添加到页面中或者进行其他操作
-            //     document.body.appendChild(canvas);
-            // })
+            let tree = document.getElementsByClassName("tree-org")[0]
+            html2canvas(tree).then((canvas) => {
+                // 这里可以将 canvas 添加到页面中或者进行其他操作
+                document.body.appendChild(canvas);
+            })
         }
     }
   }
