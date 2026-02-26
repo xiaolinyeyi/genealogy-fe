@@ -35,8 +35,8 @@ class People {
         return this.metadata.sex == false ? "女" : "男"
     }
     birthdayDes() {
-        if (this.metadata.ext != null && this.metadata.ext[0]["birthday"] != null) {
-            return this.metadata.ext[0]["birthday"]
+        if (this.metadata.ext != null && this.metadata.ext["birthday"] != null) {
+            return this.metadata.ext["birthday"]
         }
         if (this.metadata.birthday == null) {
             return "不详"
@@ -49,6 +49,8 @@ class People {
         if (this.metadata.deathday != null) {
             let date = new Date(this.metadata.deathday.date)
             return date.getFullYear()
+        } else if (this.metadata.ext != null && this.metadata.ext["deathday"] != null) {
+            return this.metadata.ext["deathday"]
         } else if (this.metadata.birthday != null) {
             let birthYear = new Date(this.metadata.birthday.date).getFullYear()
             let year = new Date().getFullYear()
@@ -89,7 +91,7 @@ class People {
             str = str + "【政治面貌】" + people.politicalStatus + "\n"
         }
         if (people.posts != null) {
-            str = str + "【历任职务】" + people.posts[people.posts.length - 1] + "\n"
+            str = str + "【历任职务】" + people.posts.join("、") + "\n"
         }
         if (people.note != null) {
             str = str + "【备注】" + people.note + "\n"
