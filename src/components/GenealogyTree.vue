@@ -11,7 +11,7 @@
         v-if="rootNode"
         style="margin: 20px;">
         <template v-slot="{node}">
-            <div style="width:20px; height: 75px;">
+            <div style="width:20px; height: 75px;" @contextmenu.prevent="showMenu($event, node)">
                 <router-link :to="{name: 'table', query: {id: node.id}}" v-if="peopleIsFamilyOwnerWithID(node.id)">
                     {{node.label}}
                 </router-link>
@@ -24,6 +24,13 @@
         <div v-else>数据加载中</div>
     </div>
   </el-scrollbar>
+  <ul v-if="menu.visible" class="people-context-menu" :style="{left: menu.x + 'px', top: menu.y + 'px'}">
+    <li v-for="item in menuItems" :key="item.key" class="people-context-menu__item" @click="onMenuClick(item.key)">
+        {{ item.label }}
+    </li>
+  </ul>
+  <people-edit-dialog v-model="peopleDialog.visible" :people-id="peopleDialog.peopleId" :ctx="peopleDialog.ctx"/>
+  <spouse-list-dialog v-model="spouseDialog.visible" :people-id="spouseDialog.peopleId"/>
   <!-- <div @click="snap">snap</div> -->
   <div style="height: 200px;"></div>
 </template>
@@ -32,12 +39,39 @@
 import { inject, watch } from 'vue'
 import People from '@/utils/people.js'
 import html2canvas from 'html2canvas'
+import PeopleEditDialog from './PeopleEditDialog.vue'
+import SpouseListDialog from './SpouseListDialog.vue'
 
 export default {
+    components: { PeopleEditDialog, SpouseListDialog },
     data() {
         return {
             allPeople: null,
-            rootNode: null
+            rootNode: null,
+            menu: { visible: false, x: 0, y: 0, peopleId: null },
+            peopleDialog: { visible: false, peopleId: null, ctx: null },
+            spouseDialog: { visible: false, peopleId: null }
+        }
+    },
+    computed: {
+        // 本家男性可编辑个人信息、配偶、新增子女；本家女性只开放配偶
+        menuItems() {
+            const metadata = this.menuPeople()
+            if (metadata == null) {
+                return []
+            }
+            const people = new People(metadata)
+            if (!people.isSameFamily()) {
+                return []
+            }
+            if (metadata.sex === false) {
+                return [{ key: 'spouse', label: '编辑配偶信息' }]
+            }
+            return [
+                { key: 'self', label: '编辑个人信息' },
+                { key: 'spouse', label: '编辑配偶信息' },
+                { key: 'child', label: '新增子女' }
+            ]
         }
     },
     created() {
@@ -57,8 +91,35 @@ export default {
     mounted() {
         console.log("tree mounted")
         this.rootNode = this.generatePeopleNode(this.allPeople)
+        document.addEventListener("click", this.closeMenu)
+    },
+    unmounted() {
+        document.removeEventListener("click", this.closeMenu)
     },
     methods: {
+        menuPeople: function() {
+            if (this.menu.peopleId == null || this.allPeople == null) {
+                return null
+            }
+            return this.allPeople[this.menu.peopleId.toString()]
+        },
+        showMenu: function(event, node) {
+            this.menu = { visible: true, x: event.clientX, y: event.clientY, peopleId: node.id }
+        },
+        closeMenu: function() {
+            this.menu.visible = false
+        },
+        onMenuClick: function(key) {
+            const peopleId = this.menu.peopleId
+            this.closeMenu()
+            if (key == 'self') {
+                this.peopleDialog = { visible: true, peopleId: peopleId, ctx: null }
+            } else if (key == 'child') {
+                this.peopleDialog = { visible: true, peopleId: null, ctx: { ownerId: peopleId, relation: 'child' } }
+            } else if (key == 'spouse') {
+                this.spouseDialog = { visible: true, peopleId: peopleId }
+            }
+        },
         groupByGen: function(allPeople) { // 每代人放到一个数组中
             var map = new Map()
             for (var key in allPeople) {
@@ -128,5 +189,29 @@ export default {
 .zm-draggable {
     margin-bottom: 20px;
     margin-right: 20px;
+}
+.people-context-menu {
+    position: fixed;
+    z-index: 3000;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    min-width: 130px;
+    background-color: #fff;
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.people-context-menu__item {
+    padding: 6px 16px;
+    font-size: 14px;
+    color: #606266;
+    cursor: pointer;
+    text-align: left;
+    white-space: nowrap;
+}
+.people-context-menu__item:hover {
+    background-color: #ecf5ff;
+    color: #409eff;
 }
 </style>

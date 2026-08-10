@@ -1,6 +1,11 @@
 <template>
     <h1 v-if="title">{{ title }}</h1>
-    <input type="file" accept=".json" @change="handleSelectFile" :style="{float: title == null ? 'center' : 'right'}"/>
+    <div class="file-entry" :style="{float: title == null ? 'none' : 'right'}">
+      <el-button v-if="canWriteBack" type="primary" plain @click="handleOpenFile">
+        {{ allPeople ? '重新打开家谱' : '打开家谱' }}
+      </el-button>
+      <input v-else type="file" accept=".json" @change="handleSelectFile"/>
+    </div>
   <div>
     <navigation-bar v-if="allPeople"></navigation-bar>
     <router-view></router-view>
@@ -10,13 +15,22 @@
 <script>
 import NavigationBar from './components/NavigationBar.vue'
 import { provide, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
+import { supportsFileSystemAccess, openGenealogyFile, applyGenealogyJSON } from '@/utils/store'
 
 export default {
   name: 'App',
   data: function() {
     return {
-      allPeople: null,
-      title: null
+      canWriteBack: supportsFileSystemAccess()
+    }
+  },
+  computed: {
+    title: function() {
+      return this.globalVars.meta != null ? this.globalVars.meta.title : null
+    },
+    allPeople: function() {
+      return Object.keys(this.globalVars.allPeople).length > 0 ? this.globalVars.allPeople : null
     }
   },
   components: {
@@ -24,20 +38,10 @@ export default {
   },
 
   created: function() { // 创建时加载数据
-    this.createCacheIfNeeded()
-
     let cacheLastGenealogy = JSON.parse(localStorage.getItem("lastGenealogy"))
     if (cacheLastGenealogy != undefined) {
-      this.initGlobalVarsWithJSON(cacheLastGenealogy)
+      applyGenealogyJSON(this.globalVars, cacheLastGenealogy)
     }
-    console.log("creating!!!")
-    console.log(cacheLastGenealogy)
-
-    // test just cache
-    // this.allPeopleRef.value = new Map(Object.entries(cacheMap.response.data))
-    // console.log(this.allPeopleRef.value)
-    // this.allPeople = cacheMap.response.data
-    
   },
   setup() {
     const globalVars = reactive({
@@ -53,21 +57,6 @@ export default {
     }
   },
   methods: {
-    createCacheIfNeeded: function() {
-      let cache = JSON.parse(localStorage.getItem(this.cacheKey))
-      let changed = false
-      if (cache == undefined) {
-        cache = new Map()
-        changed = true
-      }
-      if (cache.local == undefined) {
-        cache.local = new Map()
-        changed = true
-      }
-      if (changed) {
-        localStorage.setItem(this.cacheKey, JSON.stringify(cache))
-      }
-    },
     handleSelectFile: function(event) {
       const file = event.target.files[0]
       if (file == undefined) {
@@ -78,28 +67,23 @@ export default {
       reader.onload = function(e) {
         const fileContent = e.target.result
         const jsonData = JSON.parse(fileContent)
-        _this.initGlobalVarsWithJSON(jsonData)
-        localStorage.setItem("lastGenealogy", JSON.stringify(jsonData))
+        applyGenealogyJSON(_this.globalVars, jsonData)
+        localStorage.setItem("lastGenealogy", fileContent)
       };
       reader.readAsText(file);
     },
-    initGlobalVarsWithJSON: function(jsonData) {
-      // 取meta
-      this.globalVars.meta = jsonData["meta"]
-      this.title = this.globalVars.meta["title"]
-      // 取baseInfo
-      this.globalVars.baseInfo = jsonData["baseInfo"]
-      // 取allPeople
-      const allPeople = jsonData["allPeople"]
-      let allPeopleMap = new Map()
-      for (var i = 0; i < allPeople.length; i++) {
-        let people = allPeople[i]
-        allPeopleMap[people.id] = people
+    // 支持 File System Access API 时走这里，拿到可写句柄，编辑后能直接写回原文件
+    handleOpenFile: async function() {
+      try {
+        const text = await openGenealogyFile()
+        applyGenealogyJSON(this.globalVars, JSON.parse(text))
+        localStorage.setItem("lastGenealogy", text)
+      } catch (error) {
+        if (error.name == "AbortError") { // 用户取消选择
+          return
+        }
+        ElMessage.error("打开家谱失败：" + error.message)
       }
-      this.globalVars.allPeople = allPeopleMap
-      this.allPeople = allPeopleMap
-      // 取about
-      this.globalVars.about = jsonData["about"]
     }
   }
 }
@@ -120,5 +104,8 @@ a {
 }
 a:visited {
   color: blue;
+}
+.file-entry {
+  margin: 0 10px 10px 10px;
 }
 </style>
